@@ -1,9 +1,10 @@
 package com.example.recyclerview
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recyclerview.adapter.SkillsAdapter
@@ -23,51 +24,67 @@ class MainActivity : AppCompatActivity() {
 
         initRecyclerView()
         clickListener()
+        searchSkillsListener()
     }
 
-    private fun initRecyclerView() {
-        adapter = SkillsAdapter(
-            skillsList = skillsMutableList,
-            onClickListener = { skills -> onItemSelected(skills) },
-            onClickDelete = { position -> onDeletedItem(position) })
-        binding.recyclerViewMain.layoutManager = layoutManager
-        //binding.recyclerViewMain.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        binding.recyclerViewMain.adapter = adapter
-
-        //binding.recyclerViewMain.addItemDecoration(itemDecorator(layoutManager))
+    private fun searchSkillsListener() {
+        binding.etSearch.addTextChangedListener {
+            val skillsFilter: List<Skills> = skillsMutableList.filter { skills ->
+                skills.skillName.contains(it.toString(), ignoreCase = true) or
+                        skills.type.contains(it.toString(), ignoreCase = true)
+            }
+            val skillsFilterType: List<Skills> = skillsMutableList.filter { skills ->
+                skills.type.contains(it.toString(), ignoreCase = true) or
+                        skills.type.contains(it.toString(), ignoreCase = true)
+            }
+            skillsFilter.plus(skillsFilterType)
+            adapter.updateSkills(skillsFilter)
+        }
     }
 
-    private fun clickListener() {
-        binding.btnAdd.setOnClickListener { createSkills() }
-    }
+private fun initRecyclerView() {
+    adapter = SkillsAdapter(
+        skillsList = skillsMutableList,
+        onClickListener = { skills -> onItemSelected(skills) },
+        onClickDelete = { position -> onDeletedItem(position) })
+    binding.recyclerViewMain.layoutManager = layoutManager
+    //binding.recyclerViewMain.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+    binding.recyclerViewMain.adapter = adapter
 
-    private fun onItemSelected(skills: Skills) {
-        Toast.makeText(this, skills.skillName, Toast.LENGTH_LONG).show()
-    }
+    //binding.recyclerViewMain.addItemDecoration(itemDecorator(layoutManager))
+}
 
-    private fun createSkills() {
-        val skills = Skills(
-            "Kotlin Master",
-            "Languages",
-            "10/10",
-            "https://user-images.githubusercontent.com/61239577/194725655-be927201-47ca-4828-8ecb-cd0b62babbb6.png"
-        )
-        skillsMutableList.add(skills)
-        val position = skillsMutableList.lastIndex
-        adapter.notifyItemInserted(position)
-        layoutManager.scrollToPositionWithOffset(position, 10)
-    }
+private fun clickListener() {
+    binding.btnAdd.setOnClickListener { createSkills() }
+}
 
-    private fun onDeletedItem(position: Int) {
-        skillsMutableList.removeAt(position)
-        adapter.notifyItemRemoved(position)
-    }
+private fun onItemSelected(skills: Skills) {
+    Toast.makeText(this, skills.skillName, Toast.LENGTH_LONG).show()
+}
 
-    private fun itemDecorator(layoutManager: LinearLayoutManager): DividerItemDecoration {
-        val recyclerView = binding.recyclerViewMain.context
-        val decorator = DividerItemDecoration(recyclerView, layoutManager.orientation)
-        val divider = ContextCompat.getDrawable(recyclerView, R.drawable.divider)
-        decorator.setDrawable(divider!!)
-        return decorator
-    }
+private fun createSkills() {
+    val skills = Skills(
+        "Kotlin Master",
+        "Languages",
+        "10/10",
+        "https://user-images.githubusercontent.com/61239577/194725655-be927201-47ca-4828-8ecb-cd0b62babbb6.png"
+    )
+    skillsMutableList.add(skills)
+    val position = skillsMutableList.lastIndex
+    adapter.notifyItemInserted(position)
+    layoutManager.scrollToPositionWithOffset(position, 10)
+}
+
+private fun onDeletedItem(position: Int) {
+    skillsMutableList.removeAt(position)
+    adapter.notifyItemRemoved(position)
+}
+
+private fun itemDecorator(layoutManager: LinearLayoutManager): DividerItemDecoration {
+    val recyclerView = binding.recyclerViewMain.context
+    val decorator = DividerItemDecoration(recyclerView, layoutManager.orientation)
+    val divider = ContextCompat.getDrawable(recyclerView, R.drawable.divider)
+    decorator.setDrawable(divider!!)
+    return decorator
+}
 }

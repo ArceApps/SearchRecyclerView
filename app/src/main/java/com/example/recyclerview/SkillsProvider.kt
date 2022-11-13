@@ -117,7 +117,7 @@ class SkillsProvider {
             ),
             Skills(
                 "C#",
-                "Software",
+                "Languages",
                 "05/10",
                 "https://user-images.githubusercontent.com/61239577/194671075-7412d660-abd6-49ba-be24-80a7542a4622.png"
             ),

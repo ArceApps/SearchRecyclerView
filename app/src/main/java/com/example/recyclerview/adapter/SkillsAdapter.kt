@@ -1,5 +1,6 @@
 package com.example.recyclerview.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -11,7 +12,7 @@ import com.example.recyclerview.Skills
  * on 05/10/2022.
  */
 class SkillsAdapter(
-    private val skillsList: List<Skills>,
+    private var skillsList: List<Skills>,
     private val onClickListener: (Skills) -> Unit,
     private val onClickDelete: (Int) -> Unit
 ) : RecyclerView.Adapter<SkillsViewHolder>() {
@@ -37,5 +38,11 @@ class SkillsAdapter(
     // return size of RecyclerView
     override fun getItemCount(): Int {
         return skillsList.size
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateSkills(skillsList: List<Skills>) {
+        this.skillsList = skillsList
+        notifyDataSetChanged()
     }
 }
